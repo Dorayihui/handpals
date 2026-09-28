@@ -20,3 +20,9 @@ The whole app is one self-contained file, `index.html`.
 Paintings in "Picture frame" are public-domain works from Wikimedia Commons.
 Parallax backdrops are used under [OGA-BY 3.0](https://static.opengameart.org/OGA-BY-3.0.txt)
 — [Parallax 2D backgrounds](https://opengameart.org/content/parallax-2d-backgrounds).
+
+## Updating
+
+After a new build, double-click `update-site.command` (or run it) — it copies the
+newest `handpals-*.html` over `index.html`, commits and pushes. The live site
+refreshes about a minute later.
