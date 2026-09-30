@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#b9d9eb">
   <!-- build.command rewrites this from NAME and VERSION in js/config.js -->
-  <title>HandPals 4.14</title>
+  <title>HandPals 4.15</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎶</text></svg>">
   <style>
 :root {
@@ -1765,7 +1765,7 @@ body {
   <script type="module">
 // ---------- js/config.js ----------
 const __config = (() => {
-  const VERSION = '4.14';
+  const VERSION = '4.15';
   const NAME = 'HandPals'; // shown on the first page; the page file is named after it too
 
   // The seven notes, and the hand sign that plays each one. There are two sets
@@ -13058,7 +13058,7 @@ const __fun = (() => {
       // and-showing either way, so it is one game rather than two.
       this.asTeam = false;
       this.treat = 0; // picnic: which treat they are guarding
-      this.taught = { drive: false, picnic: false, draw: false, flies: false }; // the tutorials they have been through (drive = the wheel)
+      this.taught = { drive: false, picnic: false, flies: false }; // the tutorials they have been through (drive = the wheel); the drawing games have none
       // each player's tool (pen or stamps), colour, stamp and pen width
       this.pens = PLAYERS.map((_, p) => ({ color: p ? 8 : 0, size: 1 })); // tracing: each player's colour and pen width
       this.faces = []; // the faces in the picture, while the drawing board is open
@@ -15148,39 +15148,15 @@ const __fun = (() => {
         this.chooser.show(true);
         this.showBoardPicks();
       } else this.buildPalette(); // tracing keeps its palette: the pen and its colours
-      if (this.taught.draw) {
-        this.applyTemplate(true); // coming back keeps what was drawn
-        this.step = 'drawing';
-        say(this.title, board ? 'Drawing board: pinch and draw — on the board, or on yourselves!' : 'Trace a picture: pinch, and follow the dashes!');
-        this.say();
-      } else {
-        // One thing at a time: the dashed HANDS first, with no picture behind
-        // them, so the only dashed thing on screen is what they have to copy.
-        // The picture to trace arrives once the pinch is right.
-        this.sketch.setTemplate(null, this.together, this.fx.aspect());
-        this.step = 'tutorial';
-        say(this.title, `${board ? 'Drawing board' : 'Trace a picture'} — how it works. ⏭ Skip if you know it.`);
-        say(this.body, this.fx.toned('🤏 Pinch your thumb and first finger together, like the dashed hand. That pinch is your pencil — open your fingers and the pencil lifts.'));
-        this.fx.hint([{ ...pinchHandAt(0.3, 0.5), icon: PLAYERS[0].icon }, { ...pinchHandAt(0.7, 0.5), icon: PLAYERS[1].icon }]);
-      }
+      // No lesson and no ghost hands here: both drawing games begin drawing at
+      // once, and the picture to trace is up from the first frame.
+      this.fx.hint(null);
+      this.applyTemplate(true); // coming back keeps what was drawn
+      this.step = 'drawing';
+      say(this.title, board ? 'Drawing board: pinch and draw — on the board, or on yourselves!' : 'Trace a picture: pinch, and follow the dashes!');
+      this.say();
       this.showPens();
       this.showCounts();
-      this.fx.changed();
-    }
-
-    // ⏭ Skip / 🎓 Tutorial in the two drawing games.
-    drawTutorial(now) {
-      if (this.step === 'tutorial') {
-        this.taught.draw = true;
-        this.fx.hint(null);
-        this.step = 'drawing';
-        this.applyTemplate(true); // skipping the lesson still brings the picture in
-        say(this.title, this.game === 'board' ? 'Drawing board: pinch and draw!' : 'Trace a picture: pinch, and follow the dashes!');
-        this.say();
-      } else {
-        this.taught.draw = false;
-        this.openDraw(now);
-      }
       this.fx.changed();
     }
 
@@ -15205,26 +15181,6 @@ const __fun = (() => {
     tickDraw(hands, now) {
       this.sketch.setFaces(this.game === 'board' ? this.faces : []);
       const aspect = this.fx.aspect();
-      // while they are learning, nothing is drawn: the pinch has to be right first
-      if (this.step === 'tutorial') {
-        const pinched = hands.filter((h) => (pinchOf(h)?.shut ?? 0) >= 0.55);
-        if (!pinched.length) {
-          this.held = null;
-          return;
-        }
-        if (this.held === null || this.held === undefined) this.held = now;
-        if (now - this.held < 600) return;
-        this.held = null;
-        this.taught.draw = true;
-        this.fx.hint(null);
-        this.fx.chime(['G5', 'C6', 'E6']);
-        this.step = 'drawing';
-        this.applyTemplate(true); // now the picture to trace appears
-        say(this.title, 'That is it! 🤏 Now draw.');
-        this.say();
-        this.fx.changed();
-        return;
-      }
       const pointers = [null, null];
       const pointing = []; // fingertips free to rest on the board's row
       for (const hand of hands) {
@@ -17226,7 +17182,7 @@ const __main = (() => {
     quietBtn.title = game === 'snow' ? 'Turn the wind off' : 'Turn the music off';
     quietBtn.setAttribute('aria-pressed', String(!fun.quiet));
     const fliesLesson = game === 'flies' && fun.whispererChallenge;
-    gameTutBtn.hidden = !(game === 'snow' || game === 'picnic' || fun.drawing || fliesLesson) || fun.step === 'eaten';
+    gameTutBtn.hidden = !(game === 'snow' || game === 'picnic' || fliesLesson) || fun.step === 'eaten'; // the drawing games have no lesson
     gameTutBtn.textContent = fun.step === 'tutorial' || fun.step === 'story' || (fliesLesson && ['meet', 'guide'].includes(fun.whisperer.phase)) ? '⏭ Skip' : '🎓 Tutorial';
     nextTreatBtn.hidden = !(game === 'picnic' && fun.step === 'eaten');
     tutorialBtn.hidden = game !== 'magic';
@@ -18053,7 +18009,6 @@ const __main = (() => {
   gameTutBtn.addEventListener('click', () => {
     if (level.fun === 'snow') fun.snowTutorial(performance.now());
     else if (level.fun === 'flies') fun.fliesTutorial(performance.now());
-    else if (fun.drawing) fun.drawTutorial(performance.now());
     else fun.picnicTutorial(performance.now());
   });
   rpsStart.addEventListener('click', () => {
