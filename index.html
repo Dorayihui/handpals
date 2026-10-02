@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#b9d9eb">
   <!-- build.command rewrites this from NAME and VERSION in js/config.js -->
-  <title>HandPals 4.16</title>
+  <title>HandPals 4.17</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎶</text></svg>">
   <style>
 :root {
@@ -543,13 +543,16 @@ body {
 
 /* ---------- fun level ---------- */
 
-.fun-bar { width: max-content; min-width: min(58cqw, 84%); max-width: 90cqw; white-space: normal; pointer-events: auto; transition: opacity 0.3s, transform 0.3s; }
+.fun-bar { width: max-content; min-width: min(46cqw, 84%); max-width: 84cqw; white-space: normal; pointer-events: auto; transition: opacity 0.3s, transform 0.3s; }
+/* Smaller than the song bar it is built on (4.17): the family wanted more of
+   the picture to draw on. */
+.song-bar.fun-bar { top: calc(var(--u) * 1.4); padding: calc(var(--u) * 0.7) calc(var(--u) * 1.8) calc(var(--u) * 0.8); border-radius: calc(var(--u) * 2.8); }
 /* while magic is on screen, the panel steps up and out of the way */
 .fun-bar.aside { opacity: 0.55; transform: translateX(-50%) scale(0.72); transform-origin: top center; }
-.fun-title { font-size: calc(var(--u) * 2.1); font-weight: 700; opacity: 0.8; }
-.fun-row { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 2.4); }
-.fun-body { flex: 1; font-size: calc(var(--u) * 3.1); font-weight: 700; line-height: 1.2; }
-.fun-side { min-width: 3.2em; font-size: calc(var(--u) * 2.8); white-space: nowrap; }
+.fun-title { font-size: calc(var(--u) * 1.6); font-weight: 700; opacity: 0.8; }
+.fun-row { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 1.8); }
+.fun-body { flex: 1; font-size: calc(var(--u) * 2.3); font-weight: 700; line-height: 1.2; }
+.fun-side { min-width: 3.2em; font-size: calc(var(--u) * 2.1); white-space: nowrap; }
 .fun-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * 1.1); margin-top: calc(var(--u) * 1.1); }
 .magic-card { padding: 4px 12px; font: inherit; font-size: clamp(1rem, 1.9vw, 1.4rem); border: 2px solid var(--navy); border-radius: 999px; background: var(--paper); cursor: pointer; }
 .magic-card:hover { background: var(--columbia); }
@@ -607,7 +610,7 @@ body {
   pointer-events: none;
 }
 /* both <span> and <p>: the newer bubbles are written with <p> */
-.listen-ask span, .listen-ask p { margin: 0; padding: calc(var(--u) * 1.1) calc(var(--u) * 2.8); border-radius: 999px; background: var(--paper); color: var(--navy); font-size: calc(var(--u) * 2.6); font-weight: 700; box-shadow: 0 4px 14px rgba(0, 33, 61, 0.4); white-space: nowrap; }
+.listen-ask span, .listen-ask p { margin: 0; padding: calc(var(--u) * 0.8) calc(var(--u) * 2.1); border-radius: 999px; background: var(--paper); color: var(--navy); font-size: calc(var(--u) * 2); font-weight: 700; box-shadow: 0 4px 14px rgba(0, 33, 61, 0.4); white-space: nowrap; }
 /* The one that stays up until it is used: yellow, so it reads as a pointer
    rather than a passing message. It hangs BELOW the top bar pointing up, so
    the arrow comes first and is kept small — the big one is 288px tall. */
@@ -737,10 +740,10 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  column-gap: calc(var(--u) * 3.2);
-  row-gap: calc(var(--u) * 0.9);
-  margin-top: calc(var(--u) * 1);
-  padding-top: calc(var(--u) * 1);
+  column-gap: calc(var(--u) * 2.4);
+  row-gap: calc(var(--u) * 0.6);
+  margin-top: calc(var(--u) * 0.6);
+  padding-top: calc(var(--u) * 0.6);
   border-top: 2px dashed rgba(0, 56, 101, 0.18);
   pointer-events: auto;
 }
@@ -750,24 +753,24 @@ body {
   justify-content: center;
   gap: calc(var(--u) * 0.9);
 }
-.fun-mode-label { font-size: calc(var(--u) * 1.9); font-weight: 700; opacity: 0.62; text-transform: uppercase; letter-spacing: 0.06em; margin-right: calc(var(--u) * 0.4); }
+.fun-mode-label { font-size: calc(var(--u) * 1.5); font-weight: 700; opacity: 0.62; text-transform: uppercase; letter-spacing: 0.06em; margin-right: calc(var(--u) * 0.4); }
 /* the arrows between the two: they say the mode can be changed. With more
    than one strip on the row there is no room for them, and the lit button
    says it well enough. */
-.fun-mode-swap { display: inline-flex; width: calc(var(--u) * 5); }
+.fun-mode-swap { display: inline-flex; width: calc(var(--u) * 3.8); }
 .fun-modes:has(.fun-mode + .fun-mode) .fun-mode-swap { display: none; }
 .fun-mode-swap svg { width: 100%; height: auto; }
 .mode-opt {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: calc(var(--u) * 0.8) calc(var(--u) * 2);
-  border: 3px solid var(--navy);
+  padding: calc(var(--u) * 0.5) calc(var(--u) * 1.5);
+  border: 2px solid var(--navy);
   border-radius: 999px;
   background: var(--paper);
   color: var(--navy);
   font: inherit;
-  font-size: calc(var(--u) * 2.1);
+  font-size: calc(var(--u) * 1.7);
   font-weight: 700;
   cursor: pointer;
   opacity: 0.5;
@@ -1415,17 +1418,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: calc(var(--u) * 1.3);
-  margin-top: calc(var(--u) * 1.2);
-  padding: calc(var(--u) * 1.2) calc(var(--u) * 1) calc(var(--u) * 1.8);
+  gap: calc(var(--u) * 1.1);
+  margin-top: calc(var(--u) * 0.7);
+  padding: calc(var(--u) * 0.9) calc(var(--u) * 1) calc(var(--u) * 1.4);
   border-top: 2px dashed rgba(0, 56, 101, 0.18);
   pointer-events: auto;
 }
 .choice {
   position: relative;
   flex: none;
-  width: calc(var(--u) * 7.6);
-  height: calc(var(--u) * 7.6);
+  width: calc(var(--u) * 6.8);
+  height: calc(var(--u) * 6.8);
   padding: 0;
   border: calc(var(--u) * 0.35) solid rgba(0, 56, 101, 0.3);
   border-radius: 50%;
@@ -1433,7 +1436,7 @@ body {
   display: grid;
   place-items: center;
   cursor: pointer;
-  font-size: calc(var(--u) * 4.4);
+  font-size: calc(var(--u) * 4);
   line-height: 1;
   transition: transform 0.15s;
 }
@@ -1484,34 +1487,47 @@ body {
 /* the first pen width after the colours, a little apart */
 .choice-dot[data-id^="color-"] + .choice-dot[data-id^="size-"] { margin-left: calc(var(--u) * 1); }
 
-/* Two people: a row each, side by side, each over its own player's half of
-   the picture — a hand right of the middle is the parent's, so a child could
-   never reach the far end of one shared row. The bar is as wide as it goes,
-   so the gap between the rows sits on the middle of the picture. */
-.fun-bar:has(.choices[data-layout="split"]:not([hidden])) { width: 90cqw; }
-.choices { flex-wrap: wrap; }
-.choices[data-layout="split"] {
-  flex-wrap: nowrap;
-  align-items: stretch;
-  gap: calc(var(--u) * 2.4);
-  padding-left: 0;
-  padding-right: 0;
+/* Two people: a column each, down the outer edge of their own half of the
+   picture — out of the box at the top and onto the picture, like the old
+   tracing palettes — each with everything in it. A hand right of the middle
+   is the parent's, so a child could never reach the far end of one shared
+   row. Tracing's colours make three narrow columns (--cols, set in
+   js/choices.js); everything else is one. */
+.stage > .choices[data-layout="split"] {
+  position: absolute;
+  inset: 0;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  pointer-events: none;
 }
 .choices-row {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-wrap: wrap;
+  position: absolute;
+  top: 57%;
+  transform: translateY(-50%);
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 1), auto);
+  justify-items: center;
   align-items: center;
-  justify-content: center;
-  gap: calc(var(--u) * 1);
-  padding: calc(var(--u) * 1.1) calc(var(--u) * 0.8) calc(var(--u) * 1.6);
-  border-radius: calc(var(--u) * 2.4);
-  background: rgba(185, 217, 235, 0.45);
+  gap: calc(var(--u) * 0.9);
+  padding: calc(var(--u) * 1.2) calc(var(--u) * 1.1);
+  border-radius: calc(var(--u) * 3);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 18px rgba(0, 33, 61, 0.3);
+  pointer-events: auto;
 }
+.choices-row.row-0 { left: calc(var(--u) * 1.6); }
+.choices-row.row-1 { right: calc(var(--u) * 1.6); }
 .choices-row .choice:not(.choice-dot) { width: calc(var(--u) * 6.4); height: calc(var(--u) * 6.4); font-size: calc(var(--u) * 3.8); }
-.choices-row .choice-once { margin-left: 0; }
-.choices-row .choice:not(.choice-once) + .choice-once { margin-left: calc(var(--u) * 0.8); }
+/* in a column the gaps go above, not beside */
+.choices-row .choice, .choices-row .choice:not(.choice-once) + .choice-once,
+.choices-row .choice-dot[data-id^="color-"] + .choice-dot[data-id^="size-"] { margin-left: 0; }
+.choices-row .choice:not(.choice-once) + .choice-once { margin-top: calc(var(--u) * 0.9); }
+.choices { flex-wrap: wrap; }
+/* the box of words keeps clear of the two columns */
+.stage:has(> .choices[data-layout="split"]:not([hidden])) .fun-bar { max-width: calc(100cqw - var(--u) * 28); }
+.stage:has(> .choices[data-layout="split"]:not([hidden]) .choice-dot) .fun-bar { max-width: calc(100cqw - var(--u) * 50); }
 
 </style>
   <script src="https://cdn.jsdelivr.net/npm/tone@15.1.22/build/Tone.js"></script>
@@ -1761,7 +1777,7 @@ body {
   <script type="module">
 // ---------- js/config.js ----------
 const __config = (() => {
-  const VERSION = '4.16';
+  const VERSION = '4.17';
   const NAME = 'HandPals'; // shown on the first page; the page file is named after it too
 
   // The seven notes, and the hand sign that plays each one. There are two sets
@@ -6152,6 +6168,9 @@ const __poses = (() => {
 
   // One pointing hand, for the Draw tutorial: how to hold a finger out to draw.
   const pointingHandAt = (x, y) => hand({ x, y, dir: deg(-90), side: 1, spread: 0.05, curl: [0.65, 0, 0.95, 0.95, 0.95] });
+  // The same finger pointing sideways, out to the edge of the picture: at the
+  // column of pictures down a player's own side (two people, in Art).
+  const pointingSideAt = (x, y, toLeft) => hand({ x, y, dir: deg(toLeft ? 180 : 0), side: toLeft ? -1 : 1, spread: 0.05, curl: [0.65, 0, 0.95, 0.95, 0.95] });
   // Thumb and first finger pinched together, the other three folded: the pen in Draw.
   const pinchHandAt = (x, y) => hand({ x, y, dir: deg(-90), side: 1, spread: 0.06, curl: [0.78, 0.6, 0.95, 0.95, 0.95] });
 
@@ -6301,7 +6320,7 @@ const __poses = (() => {
     ],
     heart: POSES.heart,
   };
-  return { hand, pointingHandAt, pinchHandAt, FRAME_POSE, openHandAt, wheelPose, POSES, SHOW_POSES, SHOW_TOGETHER };
+  return { hand, pointingHandAt, pointingSideAt, pinchHandAt, FRAME_POSE, openHandAt, wheelPose, POSES, SHOW_POSES, SHOW_TOGETHER };
 })();
 
 // ---------- js/templates.js ----------
@@ -6507,15 +6526,15 @@ const __picture = (() => {
   // be picked up and moved. Things stay until undone or erased. The newest thing
   // is always on top, and pops in with a little burst of sparkles.
 
-  const GROUND = 0.8; // where the meadow begins, as a fraction of the picture's height
+  const GROUND = 0.9; // where the meadow begins, as a fraction of the picture's height (0.8 until 4.17: the family wanted less grass)
   const TREE_COLORS = ['#2f9e44', '#37b24d', '#40c057', '#2b8a3e'];
   const HOUSE_COLORS = ['#fff1c9', '#ffe8cc', '#e5dbff', '#d3f9d8', '#ffdeeb'];
   const ROOF_COLORS = ['#d9534f', '#e8590c', '#7048e8', '#1971c2', '#c2255c'];
   const ANIMALS = ['bunny', 'bird', 'butterfly'];
   const NIGHT_AT = 3; // this many stars, and night falls
   // Where the bins stand (see Picture.bins): one in the bottom-right corner, or one in each bottom corner
-  const BINS_ONE = [{ x: 0.9, y: 0.84, r: 0.11 }];
-  const BINS_TWO = [{ x: 0.1, y: 0.84, r: 0.11 }, { x: 0.9, y: 0.84, r: 0.11 }];
+  const BINS_ONE = [{ x: 0.9, y: 0.86, r: 0.11 }];
+  const BINS_TWO = [{ x: 0.1, y: 0.86, r: 0.11 }, { x: 0.9, y: 0.86, r: 0.11 }];
 
   const LINES = {
     tree: (who, n) => `${who} 🤏 planted a tree 🌳`,
@@ -10365,10 +10384,11 @@ const __choices = (() => {
   //
   // Three ways to lay it out (`build`'s `layout`):
   //   'shared' – one row that both players choose from (the finger garden)
-  //   'split'  – two rows side by side, one over each player's half, each with
-  //              everything in it: a hand on the right of the middle belongs to
-  //              the parent, so a child could never reach the right-hand end of
-  //              one shared row
+  //   'split'  – a column each, down the outer edge of each player's own half
+  //              of the picture, each with everything in it: a hand on the
+  //              right of the middle belongs to the parent, so a child could
+  //              never reach the right-hand end of one shared row. The columns
+  //              are out on the picture, not in the box of words at the top.
   //   0 or 1   – one person: one row, and only that player's choices
 
   const {PLAYERS, TUNING} = __config;
@@ -10377,6 +10397,7 @@ const __choices = (() => {
   class Chooser {
     constructor(el) {
       this.el = el;
+      this.home = el.parentElement; // under the words in the box at the top
       this.stage = el.closest('.stage') ?? el.parentElement; // the picture the hand positions are fractions of
       this.items = [];
       this.layout = 'shared';
@@ -10413,11 +10434,15 @@ const __choices = (() => {
       this.cells = [];
       this.el.replaceChildren();
       this.el.dataset.layout = layout === 'split' || layout === 'shared' ? layout : 'solo';
+      // two people's columns stand on the picture itself; one row lives in the box at the top
+      const where = layout === 'split' ? this.stage : this.home;
+      if (this.el.parentElement !== where) where.append(this.el);
       if (layout === 'split') {
         for (const owner of [0, 1]) {
           const row = document.createElement('div');
           row.className = `choices-row row-${owner}`;
           row.dataset.player = owner;
+          row.style.setProperty('--cols', items.length > 12 ? 3 : 1); // tracing's 21 colours and widths: three narrow columns
           row.setAttribute('role', 'group');
           row.setAttribute('aria-label', `${PLAYERS[owner].label}'s row`);
           this.fill(row, owner);
@@ -12790,7 +12815,7 @@ const __fun = (() => {
   const {BRAIN_SHAPES, CRITTERS, POPPERS, DANCES, BOARD_THINGS, DRAW_COLORS, DRAW_SIZES, GARDEN_THINGS, MAGIC_THINGS, PLAYERS, RHYTHM_LEVELS, RHYTHM_SCENES, SHOW_ME, TEAM_SHAPES, TREATS, TUNES, TUNING} = __config;
   const {TEAM_FX} = __team;
   const {hasIcon, icon} = __icons;
-  const {FRAME_POSE, POSES, SHOW_POSES, SHOW_TOGETHER, openHandAt, pinchHandAt, pointingHandAt, wheelPose} = __poses;
+  const {FRAME_POSE, POSES, SHOW_POSES, SHOW_TOGETHER, openHandAt, pinchHandAt, pointingHandAt, pointingSideAt, wheelPose} = __poses;
   const {Picture, Sketch} = __picture;
   const {TEMPLATES} = __templates;
   const {Picnic} = __picnic;
@@ -13018,15 +13043,15 @@ const __fun = (() => {
   // The picture maker's tutorial: point at the row, pinch, grab. Each step
   // passes as soon as they do it; a dashed ghost hand shows the shape.
   const MAGIC_STEPS = [
-    { say: '☝️ Point at one of the pictures in the row at the top, and hold your finger there a moment. It lights up — that is what you will make.', ghost: [pointingHandAt(0.3, 0.32), pointingHandAt(0.7, 0.32)] },
+    { say: '☝️ Point at one of the pictures {row}, and hold your finger there a moment. It lights up — that is what you will make.', ghost: [pointingHandAt(0.3, 0.32), pointingHandAt(0.7, 0.32)] },
     { say: '🤏 Now pinch your thumb and first finger together anywhere in the picture — and there it is!', ghost: [pinchHandAt(0.3, 0.55), pinchHandAt(0.7, 0.55)] },
     { say: '✊ Close all your fingers together on something, like grabbing it, and carry it about. Open your hand to put it down — over the 🗑 bin, it is thrown away.', ghost: [SHOW_POSES.Closed_Fist(0.3, 0.55), SHOW_POSES.Closed_Fist(0.7, 0.55)] },
   ];
   const MAGIC_SAY = {
-    free: '☝️ Point at a picture at the top to choose it, 🤏 pinch to put one in, ✊ grab to carry it — or drop it in the 🗑 bin.',
+    free: '☝️ Point at a picture {row} to choose it, 🤏 pinch to put one in, ✊ grab to carry it — or drop it in the 🗑 bin.',
   };
   const GARDEN_SAY = {
-    first: '☝️ Point at a picture at the top to choose it, then 🤏 pinch and draw a line anywhere. Grass sways, flowers bloom, pearls twinkle — and butterflies fly away!',
+    first: '☝️ Point at a picture {row} to choose it, then 🤏 pinch and draw a line anywhere. Grass sways, flowers bloom, pearls twinkle — and butterflies fly away!',
   };
   const MASK_SAY = {
     first: '🎭 Look at the camera and a mask is on your face. ✋ Sweep a hand across your face — GONG! — and it is a different one.',
@@ -13424,6 +13449,8 @@ const __fun = (() => {
       if (this.game === 'draw') this.applyTemplate();
       this.buildRow();
       if (this.drawing) this.say();
+      else if (this.game === 'magic') this.stage === 'tutorial' ? this.showTutorial() : this.showFree();
+      else if (this.game === 'garden') say(this.body, this.fx.toned(this.rowSay(GARDEN_SAY.first)));
       this.showCounts();
       this.fx.changed();
     }
@@ -13436,6 +13463,11 @@ const __fun = (() => {
     /** In an art game for one: the player drawing. Otherwise null. */
     get solo() {
       return this.art && this.artPlayers === 1 ? this.soloPlayer : null;
+    }
+
+    /** Where the pictures to choose from are, in words: two people have a column each. */
+    rowSay(text) {
+      return text.replaceAll('{row}', this.solo === null ? 'down your side' : 'at the top');
     }
 
     /** Whose things a row's ↶ and 🧹 take away: your own when you each have a row, all of them for one person. */
@@ -13518,7 +13550,7 @@ const __fun = (() => {
     say() {
       if (!this.drawing) return;
       const t = this.game === 'draw' ? TEMPLATES[this.template] : null;
-      if (!t) say(this.body, this.fx.toned('☝️ Point at the row above to choose — a crown, tears, a pen… 🤏 Pinch to put it on, open to lift. On a head, it stays with the head! 💾 saves the picture.'));
+      if (!t) say(this.body, this.fx.toned(this.rowSay('☝️ Point at a picture {row} to choose — a crown, tears, a pen… 🤏 Pinch to put it on, open to lift. On a head, it stays with the head! 💾 saves the picture.')));
       else if (this.solo !== null)
         say(this.body, this.fx.toned(`${t.icon} Trace ${t.name}! ☝️ Point at a colour above, then 🤏 pinch and follow the dashes.`));
       // One line: the other way of tracing is always on the Mode strip just
@@ -14812,13 +14844,15 @@ const __fun = (() => {
     showTutorial() {
       const step = MAGIC_STEPS[this.tutStep];
       say(this.title, `Picture maker — how it works (step ${this.tutStep + 1} of ${MAGIC_STEPS.length}). ⏭ Skip if you know it.`);
-      say(this.body, this.fx.toned(step.say));
-      this.fx.hint(step.ghost.map((g, i) => ({ ...g, icon: PLAYERS[i].icon })));
+      say(this.body, this.fx.toned(this.rowSay(step.say)));
+      // two people point out to their own column; one person has one ghost hand
+      const ghost = this.tutStep === 0 && this.solo === null ? [pointingSideAt(0.2, 0.45, true), pointingSideAt(0.8, 0.45, false)] : step.ghost;
+      this.fx.hint(ghost.map((g, i) => ({ ...g, icon: PLAYERS[i].icon })).filter((_, i) => this.solo === null || i === this.solo));
     }
 
     showFree() {
       say(this.title, 'Picture maker: make your picture!');
-      say(this.body, this.fx.toned(MAGIC_SAY.free));
+      say(this.body, this.fx.toned(this.rowSay(MAGIC_SAY.free)));
       this.fx.hint(null);
     }
 
@@ -14836,7 +14870,7 @@ const __fun = (() => {
       this.fx.cheer();
       this.fx.hint(null);
       say(this.title, 'You know all the magic! 🎉 Now make your own picture.');
-      say(this.body, this.fx.toned(MAGIC_SAY.free));
+      say(this.body, this.fx.toned(this.rowSay(MAGIC_SAY.free)));
       this.fx.changed();
     }
 
@@ -15213,7 +15247,7 @@ const __fun = (() => {
       this.fx.hands(true);
       this.fx.hint(null);
       say(this.title, 'Magic garden: pinch and draw, and watch it grow!');
-      say(this.body, this.fx.toned(GARDEN_SAY.first));
+      say(this.body, this.fx.toned(this.rowSay(GARDEN_SAY.first)));
       this.showCounts();
       this.fx.changed();
     }
