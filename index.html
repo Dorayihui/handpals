@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#b9d9eb">
   <!-- build.command rewrites this from NAME and VERSION in js/config.js -->
-  <title>HandPals 4.15</title>
+  <title>HandPals 4.16</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎶</text></svg>">
   <style>
 :root {
@@ -717,45 +717,6 @@ body {
 .legend-row.now { background: #ffe066; box-shadow: 0 0 0 2px var(--navy); animation: bob 0.7s ease-in-out infinite; }
 .legend-pinch { margin-top: 3px; border-top: 1px solid rgba(0, 56, 101, 0.2); padding-top: 5px; }
 
-/* draw: the palette beside the picture */
-.palette {
-  position: absolute;
-  left: calc(var(--u) * 2);
-  top: 55%;
-  transform: translateY(-50%);
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: calc(var(--u) * 1.1);
-  padding: calc(var(--u) * 1.4);
-  border-radius: calc(var(--u) * 3);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 6px 18px rgba(0, 33, 61, 0.3);
-}
-.swatch {
-  position: relative;
-  width: clamp(26px, 3.2vw, 38px);
-  height: clamp(26px, 3.2vw, 38px);
-  padding: 0;
-  border: 2px solid rgba(0, 56, 101, 0.3);
-  border-radius: 50%;
-  background: var(--swatch, #fff);
-  cursor: pointer;
-}
-.swatch.size { background: #fff; display: grid; place-items: center; }
-/* the tools and the stamps: a little picture on paper, not a colour */
-.swatch.tool, .swatch.stamp { background: var(--paper); display: grid; place-items: center; font-size: clamp(14px, 1.7vw, 20px); line-height: 1; }
-.swatch.tool .pic, .swatch.stamp .pic { height: 1.35em; }
-.swatch.tool { background: #e8f1f8; }
-/* a set of stamps shows its first two, one tucked behind the other */
-.swatch.combo { display: flex; align-items: center; justify-content: center; }
-.swatch.combo .pic { height: 1.05em; margin: 0 -0.18em; }
-.swatch.combo .pic:first-child { position: relative; z-index: 1; }
-/* the stamps palette has more in it: four to a row */
-.palette.wide { grid-template-columns: repeat(4, 1fr); }
-.swatch.size i { display: block; width: var(--dot); height: var(--dot); border-radius: 50%; background: var(--navy); }
-.swatch.picked { border-color: var(--navy); box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--navy); }
-.palette[data-player="1"] { left: auto; right: 12px; }
-.palette::before { content: attr(data-animal); grid-column: 1 / -1; text-align: center; font-size: 1.3rem; line-height: 1; }
 
 /* An emoji shown as its drawing (js/pictures.js). Sized in em so it grows and
    shrinks with whatever line it is sitting in. */
@@ -897,7 +858,6 @@ body {
 .fun-line:not(:has(button:not([hidden]))) { display: none; }
 .tool-gap { display: none; }
 .stage-btn.go { background: var(--navy); color: var(--paper); }
-.stage-btn.swatch { box-shadow: inset 0 0 0 4px var(--swatch, #ff4d4d), 0 4px 0 rgba(0, 33, 61, 0.45); }
 
 /* buttons for what is on screen, along the bottom of the picture */
 .song-tools {
@@ -1463,6 +1423,7 @@ body {
 }
 .choice {
   position: relative;
+  flex: none;
   width: calc(var(--u) * 7.6);
   height: calc(var(--u) * 7.6);
   padding: 0;
@@ -1512,6 +1473,45 @@ body {
 /* the actions (undo, clear), set a little apart from the choices */
 .choice-once { background: #ffe8e8; }
 .choice:not(.choice-once) + .choice-once { margin-left: calc(var(--u) * 1.4); }
+
+/* tracing's colours and pen widths: smaller, there are twenty-one of them */
+.choices:has(.choice-dot), .choices-row:has(.choice-dot) { gap: calc(var(--u) * 0.8); }
+.choice.choice-dot { width: calc(var(--u) * 5.2); height: calc(var(--u) * 5.2); }
+.choice-dot .choice-pic { width: 100%; height: 100%; }
+.choice-colour { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--c); }
+.choice-width { display: block; width: var(--w); height: var(--w); border-radius: 50%; background: var(--navy); }
+.choice-dot .choice-who { width: calc(var(--u) * 2.8); height: calc(var(--u) * 2.8); font-size: calc(var(--u) * 1.9); }
+/* the first pen width after the colours, a little apart */
+.choice-dot[data-id^="color-"] + .choice-dot[data-id^="size-"] { margin-left: calc(var(--u) * 1); }
+
+/* Two people: a row each, side by side, each over its own player's half of
+   the picture — a hand right of the middle is the parent's, so a child could
+   never reach the far end of one shared row. The bar is as wide as it goes,
+   so the gap between the rows sits on the middle of the picture. */
+.fun-bar:has(.choices[data-layout="split"]:not([hidden])) { width: 90cqw; }
+.choices { flex-wrap: wrap; }
+.choices[data-layout="split"] {
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: calc(var(--u) * 2.4);
+  padding-left: 0;
+  padding-right: 0;
+}
+.choices-row {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 1);
+  padding: calc(var(--u) * 1.1) calc(var(--u) * 0.8) calc(var(--u) * 1.6);
+  border-radius: calc(var(--u) * 2.4);
+  background: rgba(185, 217, 235, 0.45);
+}
+.choices-row .choice:not(.choice-dot) { width: calc(var(--u) * 6.4); height: calc(var(--u) * 6.4); font-size: calc(var(--u) * 3.8); }
+.choices-row .choice-once { margin-left: 0; }
+.choices-row .choice:not(.choice-once) + .choice-once { margin-left: calc(var(--u) * 0.8); }
 
 </style>
   <script src="https://cdn.jsdelivr.net/npm/tone@15.1.22/build/Tone.js"></script>
@@ -1625,8 +1625,9 @@ body {
                screen with the one in use lit, so nothing has to be pressed to
                find out what the other one is. -->
           <div id="fun-modes" class="fun-modes" hidden></div>
-          <!-- the picture maker and the magic garden: the row of pictures a
-               fingertip chooses from (js/choices.js), under the words that say how -->
+          <!-- the art games and the finger garden: the row of pictures a
+               fingertip chooses from (js/choices.js), under the words that say
+               how. Two people get a row each, side by side. -->
           <div id="choices" class="choices" role="group" aria-label="What to make" hidden></div>
         </div>
 
@@ -1681,11 +1682,6 @@ body {
 
         <!-- picture maker: which shape makes what -->
         <div id="magic-legend" class="magic-legend" aria-label="Which hand shape makes what" hidden></div>
-        <!-- draw: the colours and pen widths, one palette per player on their own side -->
-        <div id="palettes" hidden>
-          <div class="palette" data-player="0" aria-label="Child's colours"></div>
-          <div class="palette" data-player="1" aria-label="Parent's colours"></div>
-        </div>
         <!-- rock paper scissors: a big Start in the middle -->
         <button id="rps-start" type="button" class="ask-btn ask-main rps-start" hidden>▶ Start</button>
         <!-- the countdown, in the middle where both players are already looking.
@@ -1765,7 +1761,7 @@ body {
   <script type="module">
 // ---------- js/config.js ----------
 const __config = (() => {
-  const VERSION = '4.15';
+  const VERSION = '4.16';
   const NAME = 'HandPals'; // shown on the first page; the page file is named after it too
 
   // The seven notes, and the hand sign that plays each one. There are two sets
@@ -2142,7 +2138,7 @@ const __config = (() => {
     { id: 'clear', icon: '🧹', name: 'Clear the garden', once: true, clear: true },
   ];
 
-  // Draw: the palette beside the picture. Point at a colour to pick it.
+  // Trace a picture: the colours in the row at the top. Point at one to pick it.
   const DRAW_COLORS = [
     '#ff4d4d', '#ff7a1a', '#ffb31a', '#ffe95c', '#b5e61d', '#5bd66a', '#1fbf9f', '#4dd4e6',
     '#4dabf7', '#3b5bdb', '#7048e8', '#c957ff', '#ff6bd6', '#ff8fa3', '#a0522d', '#ffffff',
@@ -6437,13 +6433,21 @@ const __templates = (() => {
   ];
 
   // Where a template is drawn, as a box in the picture (fractions of it):
-  // one box per half when each player has their own, one wide box when they share.
-  function boxes(together) {
-    // kept clear of the palettes down each side and the words along the top
-    if (together) return [{ x: 0.5, y: 0.58, size: 0.66 }];
+  // one box per half when each player has their own, one wide box when they
+  // share (or when one person draws). It fits between `top` — where the box of
+  // words and colours along the top ends, which is taller for two people and
+  // on a squarer camera — and the buttons along the bottom.
+  function boxes(together, top = 0.4) {
+    const bottom = 0.9;
+    const room = bottom - top;
+    if (together) {
+      const size = Math.max(0.3, Math.min(0.62, room));
+      return [{ x: 0.5, y: bottom - size / 2, size }];
+    }
+    const size = Math.max(0.3, Math.min(0.5, room));
     return [
-      { x: 0.31, y: 0.58, size: 0.5 },
-      { x: 0.69, y: 0.58, size: 0.5 },
+      { x: 0.29, y: bottom - size / 2, size },
+      { x: 0.71, y: bottom - size / 2, size },
     ];
   }
 
@@ -6509,6 +6513,9 @@ const __picture = (() => {
   const ROOF_COLORS = ['#d9534f', '#e8590c', '#7048e8', '#1971c2', '#c2255c'];
   const ANIMALS = ['bunny', 'bird', 'butterfly'];
   const NIGHT_AT = 3; // this many stars, and night falls
+  // Where the bins stand (see Picture.bins): one in the bottom-right corner, or one in each bottom corner
+  const BINS_ONE = [{ x: 0.9, y: 0.84, r: 0.11 }];
+  const BINS_TWO = [{ x: 0.1, y: 0.84, r: 0.11 }, { x: 0.9, y: 0.84, r: 0.11 }];
 
   const LINES = {
     tree: (who, n) => `${who} 🤏 planted a tree 🌳`,
@@ -6550,25 +6557,33 @@ const __picture = (() => {
       return LINES[thing](PLAYERS[player].icon, n);
     }
 
-    undo() {
-      return this.things.pop() ?? null;
+    // The newest thing — or, given a player, the newest one THEY made.
+    undo(player = null) {
+      const at = this.things.findLastIndex((t) => player === null || t.by === player);
+      return at < 0 ? null : this.things.splice(at, 1)[0];
     }
 
-    clear() {
-      this.things = [];
+    // Everything — or, given a player, only what they made.
+    clear(player = null) {
+      this.things = player === null ? [] : this.things.filter((t) => t.by !== player);
     }
 
     // The bin, in the bottom-right corner of the picture. Carry something onto
     // it and open your hand, and that one thing is thrown away — where ↶ Undo
-    // only takes back the newest and 🧹 Erase empties the whole picture.
-    get bin() {
-      return { x: 0.9, y: 0.84, r: 0.11 };
+    // only takes back the newest and 🧹 Erase empties the whole picture. With
+    // two people (`twoBins`) there is one in each bottom corner, so nobody has
+    // to carry a thing across the other one's half to throw it away.
+    get bins() {
+      return this.twoBins ? BINS_TWO : BINS_ONE;
     }
 
-    // Is a carried thing over the bin? Aspect-corrected, the way grabAt is.
+    /** The bin a carried thing at x, y is over, or null. Aspect-corrected, the way grabAt is. */
+    binAt(x, y) {
+      return this.bins.find((b) => Math.hypot((b.x - x) * 1.78, b.y - y) <= b.r) ?? null;
+    }
+
     overBin(x, y) {
-      const b = this.bin;
-      return Math.hypot((b.x - x) * 1.78, b.y - y) <= b.r;
+      return this.binAt(x, y) !== null;
     }
 
     // Throw one thing away; true if it was there to throw.
@@ -6631,7 +6646,7 @@ const __picture = (() => {
       // the things, so a picture with a lot in it could bury the bin behind a
       // tree — and the one moment it has to be visible is exactly when the
       // picture is full and something is being carried away.
-      if (carrying) this._bin(ctx, W, H, unit);
+      if (carrying) for (const b of this.bins) this._bin(ctx, W, H, unit, b);
     }
 
     // A burst of little stars around something that has just appeared.
@@ -6653,16 +6668,15 @@ const __picture = (() => {
       ctx.restore();
     }
 
-    // A bin in the corner. `binHot` (set by the game while a carried thing is
-    // over it) opens the lid and turns it red, so it is obvious that letting go
-    // now will throw the thing away.
-    _bin(ctx, W, H, unit) {
-      const b = this.bin;
+    // A bin in a corner. `binHot` (set by the game to the bin a carried thing
+    // is over) opens that one's lid and turns it red, so it is obvious that
+    // letting go now will throw the thing away.
+    _bin(ctx, W, H, unit, b) {
       const x = b.x * W;
       const y = b.y * H;
       const w = unit * 9;
       const h = unit * 10;
-      const open = Boolean(this.binHot);
+      const open = this.binHot === b;
 
       ctx.save();
       ctx.globalAlpha = open ? 1 : 0.75;
@@ -7008,23 +7022,36 @@ const __picture = (() => {
     }
 
     // Put a template up (or take it away with null). `together` = one big outline
-    // across the middle for both, instead of one on each player's side.
-    setTemplate(template, together, aspect) {
+    // across the middle for both, instead of one on each player's side. `solo`
+    // (a player) = one person drawing: one big outline, and all of it theirs.
+    // `top` is where the box of words at the top ends (see boxes()).
+    setTemplate(template, together, aspect, solo = null, top = undefined) {
       if (!template) {
         this.template = null;
         return;
       }
       const lines = [];
       const owners = []; // which player each line's points belong to
-      boxes(together).forEach((box, i) => {
+      boxes(together || solo !== null, top).forEach((box, i) => {
         for (const line of place(template.strokes, box, aspect)) {
           lines.push(line);
           // sharing one outline: whichever side of the middle each point is on.
           // one outline each: the whole outline belongs to whoever it is drawn for.
-          owners.push(line.map(([x]) => (together ? (x < 0.5 ? 0 : 1) : i)));
+          owners.push(line.map(([x]) => (solo !== null ? solo : together ? (x < 0.5 ? 0 : 1) : i)));
         }
       });
-      this.template = { name: template.name, icon: template.icon, together, lines, owners, done: lines.map((line) => line.map(() => false)) };
+      this.template = { name: template.name, icon: template.icon, strokes: template.strokes, together, solo, top, lines, owners, done: lines.map((line) => line.map(() => false)) };
+    }
+
+    // The same outline, moved to fit under a box at the top that grew or
+    // shrank. The points keep their count and order, so what has been traced
+    // stays traced — and they only move up and down, and in or out about
+    // their own middle, so nobody's half changes either.
+    moveTemplate(top, aspect) {
+      const t = this.template;
+      if (!t) return;
+      t.top = top;
+      t.lines = boxes(t.together || t.solo !== null, top).flatMap((box) => place(t.strokes, box, aspect));
     }
 
     // How much of each half has been traced, as a fraction: [left, right].
@@ -7106,15 +7133,24 @@ const __picture = (() => {
       if (stroke.points.length < 2) this.strokes = this.strokes.filter((s) => s !== stroke); // a dot too small to see
     }
 
-    undo() {
-      this.live.clear();
-      return this.strokes.pop() ?? null;
+    // The newest stroke — or, given a player, the newest one THEY drew.
+    undo(player = null) {
+      this.stopLive(player);
+      const at = this.strokes.findLastIndex((s) => player === null || s.player === player);
+      return at < 0 ? null : this.strokes.splice(at, 1)[0];
     }
 
-    clear() {
-      this.live.clear();
-      this.strokes = [];
-      if (this.template) this.template.done = this.template.lines.map((line) => line.map(() => false));
+    // Everything — or, given a player, only their strokes and their part of the outline.
+    clear(player = null) {
+      this.stopLive(player);
+      this.strokes = player === null ? [] : this.strokes.filter((s) => s.player !== player);
+      const t = this.template;
+      if (t) t.done = t.done.map((line, i) => line.map((done, k) => done && player !== null && t.owners[i][k] !== player));
+    }
+
+    // The lines being drawn right now stop where they are.
+    stopLive(player = null) {
+      for (const [id, s] of this.live) if (player === null || s.player === player) this.live.delete(id);
     }
 
     draw(ctx, canvas, unit, now = performance.now()) {
@@ -10054,15 +10090,19 @@ const __garden = (() => {
       });
     }
 
-    undo() {
-      const plant = this.plants.pop() ?? null;
-      if (plant) this.fliers = this.fliers.filter((f) => f.plant !== plant);
+    // The newest line — or, given a player, the newest one THEY drew — and its butterflies.
+    undo(player = null) {
+      const at = this.plants.findLastIndex((p) => player === null || p.player === player);
+      if (at < 0) return null;
+      const [plant] = this.plants.splice(at, 1);
+      this.fliers = this.fliers.filter((f) => f.plant !== plant);
       return plant;
     }
 
-    clear() {
-      this.plants = [];
-      this.fliers = [];
+    // Everything — or, given a player, only what they grew.
+    clear(player = null) {
+      this.plants = player === null ? [] : this.plants.filter((p) => p.player !== player);
+      this.fliers = player === null ? [] : this.fliers.filter((f) => f.plant.player !== player);
     }
 
     // The butterflies wander: each flies towards a spot of its own, picks a new
@@ -10316,12 +10356,20 @@ const __choices = (() => {
   // The players choose with their HANDS, not the mouse: hold a fingertip on a
   // picture for a moment and it is picked. A ring fills up round it while they
   // wait, so they can see it is working, and their animal sits on the one they
-  // have. Each player has a pick of their own. A click picks too (for both), for
-  // a grown-up at the keyboard.
+  // have. Each player has a pick of their own. A click picks too, for a
+  // grown-up at the keyboard.
   //
   // The mechanism — a row of choices you point at, no buttons to press — was
   // learned from an interactive art piece where the row was words; here the
   // words are pictures, so a child who cannot read yet can choose.
+  //
+  // Three ways to lay it out (`build`'s `layout`):
+  //   'shared' – one row that both players choose from (the finger garden)
+  //   'split'  – two rows side by side, one over each player's half, each with
+  //              everything in it: a hand on the right of the middle belongs to
+  //              the parent, so a child could never reach the right-hand end of
+  //              one shared row
+  //   0 or 1   – one person: one row, and only that player's choices
 
   const {PLAYERS, TUNING} = __config;
   const {illustrate} = __pictures;
@@ -10331,25 +10379,29 @@ const __choices = (() => {
       this.el = el;
       this.stage = el.closest('.stage') ?? el.parentElement; // the picture the hand positions are fractions of
       this.items = [];
+      this.layout = 'shared';
       this.picked = [{}, {}];      // per player: group → the id picked in it
-      this.hover = [null, null]; // what each player's finger is resting on
+      this.hover = [null, null]; // the cell each player's finger is resting on
       this.since = [0, 0];       // and since when
       this.fired = [false, false]; // it has picked; the finger must leave before it can again
-      this.cells = new Map();
+      this.cells = [];           // {b, id, item, owner}: owner is the player whose row it is in, or null
       this.onPick = null;        // (player, item, byHand) => void
     }
 
     /**
-     * @param {Array<{id: string, name: string, html: string, group?: string, hold?: number, once?: boolean, repick?: boolean}>} items
+     * @param {Array<{id: string, name: string, html: string, group?: string, hold?: number, once?: boolean, repick?: boolean, cls?: string}>} items
      *   `hold` is how long a finger must rest, `once` marks an action (clear
      *   the picture) rather than a choice that stays, `repick` a choice that
      *   does something more when chosen again (the pen: another colour).
      *   `group` lets one row hold several sets of choices (the garden's
-     *   weather and its instrument): a pick stays within its group.
+     *   weather and its instrument): a pick stays within its group. `cls` is
+     *   an extra class for the cell (a colour is a small dot).
      * @param {[Array<string>|string|null, Array<string>|string|null]} picked  each player's choices to begin with
+     * @param {'shared'|'split'|0|1} layout  see the top of the file
      */
-    build(items, picked) {
+    build(items, picked, layout = 'shared') {
       this.items = items;
+      this.layout = layout;
       this.groups = new Map(items.map((it) => [it.id, it.group ?? 'main']));
       this.picked = picked.map((ids) => {
         const out = {};
@@ -10358,24 +10410,47 @@ const __choices = (() => {
       });
       this.hover = [null, null];
       this.fired = [false, false];
-      this.cells.clear();
+      this.cells = [];
       this.el.replaceChildren();
-      for (const item of items) {
+      this.el.dataset.layout = layout === 'split' || layout === 'shared' ? layout : 'solo';
+      if (layout === 'split') {
+        for (const owner of [0, 1]) {
+          const row = document.createElement('div');
+          row.className = `choices-row row-${owner}`;
+          row.dataset.player = owner;
+          row.setAttribute('role', 'group');
+          row.setAttribute('aria-label', `${PLAYERS[owner].label}'s row`);
+          this.fill(row, owner);
+          this.el.append(row);
+        }
+      } else this.fill(this.el, null);
+      this.mark();
+    }
+
+    // One row's cells. `owner` is the player the row belongs to (split), or null.
+    fill(row, owner) {
+      const solo = this.soloPlayer;
+      const who = owner !== null ? [owner] : solo !== null ? [solo] : [0, 1]; // whose animal can sit on a cell
+      for (const item of this.items) {
         const b = document.createElement('button');
         b.type = 'button';
-        b.className = `choice${item.once ? ' choice-once' : ''}`;
+        b.className = `choice${item.once ? ' choice-once' : ''}${item.cls ? ` ${item.cls}` : ''}`;
         b.dataset.id = item.id;
         b.title = item.name;
         b.setAttribute('aria-label', item.name);
         b.innerHTML = `<span class="choice-pic">${item.html}</span><i class="choice-ring"></i>`
-          + PLAYERS.map((p, i) => `<i class="choice-who who-${i}">${illustrate(p.icon)}</i>`).join('');
+          + who.map((i) => `<i class="choice-who who-${i}">${illustrate(PLAYERS[i].icon)}</i>`).join('');
         b.addEventListener('click', () => {
-          for (const player of [0, 1]) this.set(player, item.id, false);
+          for (const player of who) this.set(player, item.id, false);
         });
-        this.cells.set(item.id, b);
-        this.el.append(b);
+        this.cells.push({ b, id: item.id, item, owner });
+        row.append(b);
       }
-      this.mark();
+    }
+
+    /** The one person choosing, when there is one; null for two. */
+    get soloPlayer() {
+      return typeof this.layout === 'number' ? this.layout : null;
     }
 
     show(on) {
@@ -10384,6 +10459,11 @@ const __choices = (() => {
 
     itemOf(id) {
       return this.items.find((it) => it.id === id) ?? null;
+    }
+
+    /** The buttons showing `id`: one, or one in each player's row. */
+    cellsOf(id) {
+      return this.cells.filter((c) => c.id === id);
     }
 
     /** Give `player` the choice `id`; an action item only fires. */
@@ -10416,61 +10496,73 @@ const __choices = (() => {
       return this.picked[player][group] ?? null;
     }
 
-    /** The item under x, y (fractions of the picture), or null. */
-    at(x, y) {
+    // The cell under x, y (fractions of the picture) that `player` may use —
+    // their own row's, or a shared one. With no player, any cell.
+    cellAt(x, y, player = null) {
       const frame = this.stage.getBoundingClientRect();
       if (!frame.width) return null;
       const px = frame.left + x * frame.width;
       const py = frame.top + y * frame.height;
       const pad = frame.height * 0.012;
-      for (const [id, b] of this.cells) {
-        const r = b.getBoundingClientRect();
-        if (px >= r.left - pad && px <= r.right + pad && py >= r.top - pad && py <= r.bottom + pad) return id;
+      for (const cell of this.cells) {
+        if (player !== null && cell.owner !== null && cell.owner !== player) continue;
+        const r = cell.b.getBoundingClientRect();
+        if (px >= r.left - pad && px <= r.right + pad && py >= r.top - pad && py <= r.bottom + pad) return cell;
       }
       return null;
     }
 
+    /** The id of the item under x, y (fractions of the picture), or null. */
+    at(x, y, player = null) {
+      return this.cellAt(x, y, player)?.id ?? null;
+    }
+
     /**
      * Fingertips resting on the row: `points` are {x, y, player}, fractions of
-     * the picture. A tip that stays on a picture for its `hold` picks it.
+     * the picture. A tip that stays on a picture for its `hold` picks it. In
+     * two rows, a player's finger only counts on their own row.
      */
     tick(points, now) {
       if (this.el.hidden) return;
       const on = [null, null];
       for (const p of points) {
         if (on[p.player]) continue; // one hand per player is enough
-        const id = this.at(p.x, p.y);
-        if (id) on[p.player] = id;
+        const cell = this.cellAt(p.x, p.y, p.player);
+        if (cell) on[p.player] = cell;
       }
-      const lit = new Map(); // cell id -> progress, for the ring
+      const lit = new Map(); // cell -> progress, for the ring
       for (const player of [0, 1]) {
-        const id = on[player];
-        if (id !== this.hover[player]) {
-          this.hover[player] = id;
+        const cell = on[player];
+        if (cell !== this.hover[player]) {
+          this.hover[player] = cell;
           this.since[player] = now;
           this.fired[player] = false;
         }
-        if (!id) continue;
-        const item = this.itemOf(id);
+        if (!cell) continue;
+        const { item, id } = cell;
         const hold = item.hold ?? TUNING.pickHoldMs;
         const t = Math.min(1, (now - this.since[player]) / hold);
-        if (!this.fired[player]) lit.set(id, Math.max(lit.get(id) ?? 0, t));
+        if (!this.fired[player]) lit.set(cell, Math.max(lit.get(cell) ?? 0, t));
         if (t >= 1 && !this.fired[player]) {
           this.fired[player] = true;
           if (item.once || item.repick || this.picked[player][item.group ?? 'main'] !== id) this.set(player, id, true);
         }
       }
-      for (const [id, b] of this.cells) {
-        const t = lit.get(id);
-        b.classList.toggle('hover', t !== undefined);
-        b.style.setProperty('--p', `${Math.round((t ?? 0) * 100)}%`);
+      for (const cell of this.cells) {
+        const t = lit.get(cell);
+        cell.b.classList.toggle('hover', t !== undefined);
+        cell.b.style.setProperty('--p', `${Math.round((t ?? 0) * 100)}%`);
       }
     }
 
     mark() {
-      for (const [id, b] of this.cells) {
+      const solo = this.soloPlayer;
+      for (const { b, id, owner } of this.cells) {
         const group = this.groups?.get(id) ?? 'main';
-        for (const player of [0, 1]) b.classList.toggle(`picked-${player}`, this.picked[player][group] === id);
+        for (const player of [0, 1]) {
+          const mine = (owner === null || owner === player) && (solo === null || solo === player);
+          b.classList.toggle(`picked-${player}`, mine && this.picked[player][group] === id);
+        }
       }
     }
   }
@@ -13005,10 +13097,9 @@ const __fun = (() => {
   // `fx` is what it may use from the rest of the game:
   //   { spray, team, hint, scene, snapshot, changed, busy, stars, party, chime, cheer, toned }
   class Fun {
-    constructor(bar, legend, palettes, choices, fx) {
+    constructor(bar, legend, choices, fx) {
       this.bar = bar;
       this.legend = legend;
-      this.palettes = palettes; // one per player, on their own side of the picture
       this.chooser = new Chooser(choices); // the row of pictures at the top, chosen with a fingertip
       this.fx = fx;
       this.title = bar.querySelector('.fun-title');
@@ -13042,6 +13133,11 @@ const __fun = (() => {
       this.gardenPick = ['grass', 'flowers']; // the garden: what each player's line grows into
       this.boardPick = ['crown', 'glasses']; // the drawing board: what each player's pinch puts on
       this.boardColor = [0, 8]; // and the colour of their pen, cycled by picking the pen again
+      // The art games are played by one person or by two. One person has
+      // everything in one row at the top and the whole picture to themselves;
+      // two have a row each, over their own half, with their own ↶ and 🧹.
+      this.artPlayers = 2;
+      this.soloPlayer = 0; // with one person, which of the two it is (main.js's who buttons)
 
       this.molesTogether = true; // play together by default: racing is a choice
       this.molesPerSide = 3;     // how many holes each side has
@@ -13059,7 +13155,6 @@ const __fun = (() => {
       this.asTeam = false;
       this.treat = 0; // picnic: which treat they are guarding
       this.taught = { drive: false, picnic: false, flies: false }; // the tutorials they have been through (drive = the wheel); the drawing games have none
-      // each player's tool (pen or stamps), colour, stamp and pen width
       this.pens = PLAYERS.map((_, p) => ({ color: p ? 8 : 0, size: 1 })); // tracing: each player's colour and pen width
       this.faces = []; // the faces in the picture, while the drawing board is open
       this.stage = 'tutorial'; // picture maker: 'tutorial' or 'free'
@@ -13067,7 +13162,6 @@ const __fun = (() => {
       // game (`board`), with no picture and the tools instead.
       this.together = false; // draw: one big outline for both, or one each
       this.cheered = false; // draw: the "you did it" for a finished template has been shown
-      this.buildPalette();
     }
 
     open(game, now) {
@@ -13084,7 +13178,6 @@ const __fun = (() => {
       this.fx.faces?.(game === 'board' || game === 'masks'); // the face finder runs for the board and the masks only
       this.legend.hidden = true; // the picture maker's list of hand shapes is gone: the row at the top says what there is
       this.chooser.show(false); // the games that use the row show it again
-      this.palettes.hidden = game !== 'draw'; // tracing keeps its palette; the board has the row at the top
       if (game === 'rps') {
         this.score = [0, 0];
         this.matchOver = false;
@@ -13136,7 +13229,6 @@ const __fun = (() => {
       this.game = null;
       this.bar.hidden = true;
       this.legend.hidden = true;
-      this.palettes.hidden = true;
       this.fx.hint(null);
       this.fx.scene(null);
       this.chooser.show(false);
@@ -13248,32 +13340,34 @@ const __fun = (() => {
       return RHYTHM_LEVELS[this.rhythmLevel];
     }
 
-    // Undo and Erase buttons (Magic hands and Draw).
-    undo() {
+    // Undo and Erase: the buttons along the bottom take back anybody's; the ↶
+    // and 🧹 in a player's own row (two people) only take back theirs.
+    undo(player = null) {
       if (this.game === 'magic') {
-        const gone = this.picture.undo();
+        const gone = this.picture.undo(player);
         say(this.body, gone ? `↶ The ${thingIcon(gone.thing)} is gone again` : 'Nothing to undo yet');
       } else if (this.game === 'garden') {
-        const gone = this.garden.undo();
+        const gone = this.garden.undo(player);
         say(this.body, gone ? '↶ The last line is gone again' : 'Nothing to undo yet');
       } else if (this.game === 'fgarden') {
         const gone = this.fgarden.plants.pop();
         say(this.body, gone ? '↶ The last flower is gone again' : 'Nothing to undo yet');
         this.showGardenCounts();
       } else if (this.drawing) {
-        this.sketch.undo();
-        say(this.body, this.sketch.count ? '↶ The last line is gone' : 'A clean sheet. Pinch and draw!');
+        const gone = this.sketch.undo(player);
+        say(this.body, gone ? '↶ The last line is gone' : 'Nothing to undo yet');
       }
       this.showCounts();
     }
 
-    erase() {
+    erase(player = null) {
+      const whose = player === null ? null : PLAYERS[player].icon; // only this player's things go
       if (this.game === 'magic') {
-        this.picture.clear();
-        say(this.body, '🧹 An empty meadow again. Pinch to fill it!');
+        this.picture.clear(player);
+        say(this.body, this.fx.toned(whose ? `🧹 ${whose}'s things are gone. 🤏 Pinch to make more!` : '🧹 An empty meadow again. Pinch to fill it!'));
       } else if (this.game === 'garden') {
-        this.garden.clear();
-        say(this.body, '🧹 The garden is bare again. Pinch and draw to grow it back!');
+        this.garden.clear(player);
+        say(this.body, this.fx.toned(whose ? `🧹 ${whose}'s lines are gone. 🤏 Pinch and draw to grow more!` : '🧹 The garden is bare again. Pinch and draw to grow it back!'));
       } else if (this.game === 'fgarden') {
         this.fgarden.reset(performance.now());
         this.fgarden.stopMusic();
@@ -13282,8 +13376,8 @@ const __fun = (() => {
         say(this.body, '🧹 A bare patch again. Pinch a fingertip to grow a garden!');
         this.showGardenCounts();
       } else if (this.drawing) {
-        this.sketch.clear();
-        say(this.body, '🧹 A clean sheet. Pinch and draw!');
+        this.sketch.clear(player);
+        say(this.body, this.fx.toned(whose ? `🧹 ${whose}'s drawing is gone. 🤏 Pinch and draw!` : '🧹 A clean sheet. Pinch and draw!'));
       }
       this.showCounts();
     }
@@ -13306,6 +13400,81 @@ const __fun = (() => {
       this.applyTemplate();
       this.say();
       return this.together;
+    }
+
+    // 🙋 1 person / 2 people, in all the art games. Set, not toggled. What is
+    // already drawn stays — except an outline to trace, which moves and so
+    // starts afresh.
+    setArtPlayers(n, now) {
+      if (this.artPlayers === n) return n;
+      this.artPlayers = n;
+      this.relayout(now);
+      return n;
+    }
+
+    /** With one person: which of the two it is. */
+    setSoloPlayer(player, now) {
+      if (this.soloPlayer === player) return;
+      this.soloPlayer = player;
+      if (this.solo !== null) this.relayout(now);
+    }
+
+    relayout(now) {
+      if (!this.art) return;
+      if (this.game === 'draw') this.applyTemplate();
+      this.buildRow();
+      if (this.drawing) this.say();
+      this.showCounts();
+      this.fx.changed();
+    }
+
+    /** The art games: these can be played by one person or by two. */
+    get art() {
+      return this.game === 'magic' || this.game === 'draw' || this.game === 'board' || this.game === 'garden';
+    }
+
+    /** In an art game for one: the player drawing. Otherwise null. */
+    get solo() {
+      return this.art && this.artPlayers === 1 ? this.soloPlayer : null;
+    }
+
+    /** Whose things a row's ↶ and 🧹 take away: your own when you each have a row, all of them for one person. */
+    mine(player) {
+      return this.solo === null ? player : null;
+    }
+
+    // The row at the top of the open art game: everything in one row for one
+    // person, or a row each — over their own half — for two.
+    buildRow() {
+      const layout = this.solo ?? 'split';
+      const undo = (name) => ({ id: 'undo', name, html: icon('undo'), once: true, hold: 700 });
+      const erase = (id, name) => ({ id, name, html: illustrate('🧹'), once: true, hold: 1300 });
+      if (this.game === 'magic') {
+        this.picture.twoBins = this.solo === null; // and a bin in each bottom corner
+        this.chooser.build([
+          ...MAGIC_THINGS.map((t) => ({ id: t.thing, name: t.name, html: this.magicPic(t) })),
+          undo('Undo the last thing'),
+          erase('erase', 'Empty the picture'),
+        ], this.magicPick, layout);
+        this.chooser.onPick = (player, item, byHand) => this.magicPicked(player, item, byHand, performance.now());
+      } else if (this.game === 'garden') {
+        this.chooser.build(GARDEN_THINGS.map((t) => ({ id: t.id, name: t.name, html: this.gardenPic(t), once: Boolean(t.once), hold: t.clear ? 1300 : t.once ? 700 : undefined })), this.gardenPick, layout);
+        this.chooser.onPick = (player, item) => this.gardenPicked(player, item);
+      } else if (this.game === 'board') {
+        this.chooser.build(BOARD_THINGS.map((t) => ({ id: t.id, name: t.name, html: this.gardenPic(t), once: Boolean(t.once), repick: Boolean(t.pen), hold: t.clear ? 1300 : t.once ? 700 : undefined })), this.boardPick, layout);
+        this.chooser.onPick = (player, item) => this.boardPicked(player, item);
+        this.showBoardPicks();
+      } else if (this.game === 'draw') {
+        // tracing: the colours and the pen widths, where they used to be a palette down each side
+        this.chooser.build([
+          ...DRAW_COLORS.map((c, i) => ({ id: `color-${i}`, group: 'color', name: `Colour ${i + 1}`, html: `<i class="choice-colour" style="--c: ${c}"></i>`, cls: 'choice-dot' })),
+          ...DRAW_SIZES.map((_, i) => ({ id: `size-${i}`, group: 'size', name: ['A thin pen', 'A middle pen', 'A thick pen'][i], html: `<i class="choice-width" style="--w: ${32 + i * 22}%"></i>`, cls: 'choice-dot' })),
+          undo('Undo the last line'),
+          erase('erase', 'Wipe the drawing'),
+        ], this.pens.map((pen) => [`color-${pen.color}`, `size-${pen.size}`]), layout);
+        this.chooser.onPick = (player, item) => this.tracePicked(player, item);
+      } else return;
+      this.chooser.show(true);
     }
 
     /** The games with the row of pictures at the top. */
@@ -13331,8 +13500,18 @@ const __fun = (() => {
       this.cheered = false;
       this.first = null; // who finished their outline first
       if (!keep) this.sketch.clear(); // a fresh outline starts on a clean sheet
-      this.sketch.setTemplate(this.game === 'draw' ? TEMPLATES[this.template] : null, this.together, this.fx.aspect());
+      this.sketch.setTemplate(this.game === 'draw' ? TEMPLATES[this.template] : null, this.together, this.fx.aspect(), this.solo, this.fx.barBottom());
       this.showCounts();
+    }
+
+    // The outline to trace sits below the box of words and colours at the
+    // top, which changes height (two rows of colours for two people, a squarer
+    // camera, a second strip). main.js calls this once the box is drawn.
+    fitTemplate() {
+      const t = this.game === 'draw' ? this.sketch.template : null;
+      if (!t) return;
+      const top = this.fx.barBottom();
+      if (Math.abs(top - (t.top ?? 0)) > 0.01) this.sketch.moveTemplate(top, this.fx.aspect());
     }
 
     // What the words under the title say in the two drawing games.
@@ -13340,16 +13519,14 @@ const __fun = (() => {
       if (!this.drawing) return;
       const t = this.game === 'draw' ? TEMPLATES[this.template] : null;
       if (!t) say(this.body, this.fx.toned('☝️ Point at the row above to choose — a crown, tears, a pen… 🤏 Pinch to put it on, open to lift. On a head, it stays with the head! 💾 saves the picture.'));
-      // Both ways of tracing are named every time, not just the one in use, so
-      // nobody has to discover that the other one exists.
+      else if (this.solo !== null)
+        say(this.body, this.fx.toned(`${t.icon} Trace ${t.name}! ☝️ Point at a colour above, then 🤏 pinch and follow the dashes.`));
+      // One line: the other way of tracing is always on the Mode strip just
+      // below, and the two rows of colours need the room.
       else if (this.together)
-        say(this.body, this.fx.toned(
-          `${t.icon} Trace ${t.name} 🤝 TOGETHER: ${PLAYERS[0].icon} does the left half, ${PLAYERS[1].icon} the right half — neither can finish it alone. Press 🙋 for one each instead.`,
-        ));
+        say(this.body, this.fx.toned(`${t.icon} Trace ${t.name} 🤝 together: ${PLAYERS[0].icon} the left half, ${PLAYERS[1].icon} the right!`));
       else
-        say(this.body, this.fx.toned(
-          `${t.icon} Trace ${t.name} 🙋 ON YOUR OWN: one each, and it is a race! Press 🤝 to share one big picture instead.`,
-        ));
+        say(this.body, this.fx.toned(`${t.icon} Trace ${t.name} 🏁 one each — who finishes first?`));
     }
 
     async save() {
@@ -14587,55 +14764,6 @@ const __fun = (() => {
 
     // ---------- magic hands: a picture ----------
 
-    // A palette for each player, on their own side of the picture. A pinch
-    // resting on a swatch picks it; so does a click. On the drawing board the
-    // first row is the tools — the pen, or the stamps — and the swatches below
-    // are whatever that tool draws with: colours, or the stamps themselves (a
-    // set shows its first two). Tracing has the pen only.
-    buildPalette() {
-      for (const palette of this.palettes.children) {
-        const player = Number(palette.dataset.player);
-        const pen = this.pens[player];
-        palette.replaceChildren();
-        const add = (className, data, inner, style) => {
-          const b = document.createElement('button');
-          b.type = 'button';
-          b.className = `swatch ${className}`;
-          Object.assign(b.dataset, data);
-          if (inner) b.innerHTML = inner;
-          if (style) b.style.setProperty('--swatch', style);
-          b.addEventListener('click', () => this.pick(player, b));
-          palette.append(b);
-        };
-        DRAW_COLORS.forEach((color, i) => add('', { color: i }, '', color));
-        DRAW_SIZES.forEach((size, i) => add('size', { size: i }, `<i style="--dot: ${6 + i * 6}px"></i>`));
-      }
-      this.showPens();
-    }
-
-    pick(player, swatch) {
-      const pen = this.pens[player];
-      const d = swatch.dataset;
-      if (d.color !== undefined) pen.color = Number(d.color);
-      else pen.size = Number(d.size);
-      this.showPens();
-    }
-
-    // Mark each player's colour and pen width on their palette (tracing).
-    showPens() {
-      for (const palette of this.palettes.children) {
-        const pen = this.pens[Number(palette.dataset.player)];
-        palette.dataset.animal = PLAYERS[Number(palette.dataset.player)].icon;
-        for (const b of palette.children) {
-          const d = b.dataset;
-          let on;
-          if (d.color !== undefined) on = pen.color === Number(d.color);
-          else on = pen.size === Number(d.size);
-          b.classList.toggle('picked', on);
-        }
-      }
-    }
-
     // What a player draws with right now, for the sketch.
     penOf(player) {
       if (this.game === 'board') {
@@ -14657,13 +14785,7 @@ const __fun = (() => {
       this.fx.scene(this.picture);
       this.added = [0, 0];
       this.moved = false;
-      this.chooser.build([
-        ...MAGIC_THINGS.map((t) => ({ id: t.thing, name: t.name, html: this.magicPic(t) })),
-        { id: 'undo', name: 'Undo the last thing', html: icon('undo'), once: true, hold: 700 },
-        { id: 'erase', name: 'Empty the picture', html: illustrate('🧹'), once: true, hold: 1300 },
-      ], this.magicPick);
-      this.chooser.onPick = (player, item, byHand) => this.magicPicked(player, item, byHand, performance.now());
-      this.chooser.show(true);
+      this.buildRow();
       this.fx.hands(true);
       if (this.stage === 'tutorial') {
         this.tutStep = 0;
@@ -14675,8 +14797,8 @@ const __fun = (() => {
 
     // A fingertip rested on a picture in the row (or it was clicked).
     magicPicked(player, item, byHand, now) {
-      if (item.id === 'undo') return this.undo();
-      if (item.id === 'erase') return this.erase();
+      if (item.id === 'undo') return this.undo(this.mine(player));
+      if (item.id === 'erase') return this.erase(this.mine(player));
       this.magicPick[player] = item.id;
       const t = MAGIC_THINGS.find((x) => x.thing === item.id);
       this.fx.chime(['E5', 'G5']);
@@ -14718,10 +14840,20 @@ const __fun = (() => {
       this.fx.changed();
     }
 
+    // How many things each player has made, beside the words — only the one
+    // person's, when there is one.
     showCounts() {
-      if (this.game === 'magic') this.sides.forEach((el, p) => (say(el, `${PLAYERS[p].icon} ${this.added?.[p] ?? 0}`)));
-      else if (this.game === 'garden') this.sides.forEach((el, p) => (say(el, `${PLAYERS[p].icon} ${this.garden.countFor(p)}`)));
-      else if (this.game === 'board') this.sides.forEach((el, p) => (say(el, `${PLAYERS[p].icon} ${this.sketch.strokes.filter((st) => st.player === p).length}`)));
+      const count = (p) => {
+        if (this.game === 'magic') return this.added?.[p] ?? 0;
+        if (this.game === 'garden') return this.garden.countFor(p);
+        if (this.game === 'board') return this.sketch.strokes.filter((st) => st.player === p).length;
+        return null;
+      };
+      const solo = this.solo;
+      this.sides.forEach((el, p) => {
+        const n = count(p);
+        if (n !== null) say(el, solo === null || solo === p ? `${PLAYERS[p].icon} ${n}` : '');
+      });
     }
 
     // The pinch makes and the grab moves — no modes, no buttons. A grab is read
@@ -14730,7 +14862,7 @@ const __fun = (() => {
     // reason. A finger that is neither is free to rest on the row at the top.
     tickMagic(hands, now) {
       const carried = new Set();
-      let overBin = false;
+      let hotBin = null;
       const pointing = [];
       for (const hand of hands) {
         const grab = grabOf(hand);
@@ -14741,7 +14873,7 @@ const __fun = (() => {
           if (hand.grab) {
             this.picture.moveTo(hand.grab, grab.x, grab.y);
             carried.add(hand.grab);
-            if (this.picture.overBin(grab.x, grab.y)) overBin = true;
+            hotBin = this.picture.binAt(grab.x, grab.y) ?? hotBin;
             continue;
           }
           // a closed hand resting on a thing for a moment takes hold of it
@@ -14790,7 +14922,7 @@ const __fun = (() => {
         if (shut < 0.42) pointing.push({ x: 1 - hand.lm[8].x, y: hand.lm[8].y, player: hand.player });
       }
       for (const it of this.picture.things) it.held = carried.has(it);
-      this.picture.binHot = overBin; // the lid opens while something is held over it
+      this.picture.binHot = hotBin; // that bin's lid opens while something is held over it
       this.chooser.tick(pointing, now); // choosing: a fingertip resting on a picture at the top
     }
 
@@ -15077,9 +15209,7 @@ const __fun = (() => {
       this.garden.lastTick = now;
       this.fx.scene(this.garden);
       this.step = 'growing';
-      this.chooser.build(GARDEN_THINGS.map((t) => ({ id: t.id, name: t.name, html: this.gardenPic(t), once: Boolean(t.once), hold: t.clear ? 1300 : t.once ? 700 : undefined })), this.gardenPick);
-      this.chooser.onPick = (player, item) => this.gardenPicked(player, item);
-      this.chooser.show(true);
+      this.buildRow();
       this.fx.hands(true);
       this.fx.hint(null);
       say(this.title, 'Magic garden: pinch and draw, and watch it grow!');
@@ -15089,9 +15219,9 @@ const __fun = (() => {
     }
 
     gardenPicked(player, item) {
-      if (item.id === 'undo') return this.undo();
+      if (item.id === 'undo') return this.undo(this.mine(player));
       if (item.once) {
-        this.erase();
+        this.erase(this.mine(player));
         this.fx.chime(['G4', 'E4', 'C4']);
       } else {
         this.gardenPick[player] = item.id;
@@ -15141,13 +15271,7 @@ const __fun = (() => {
       const board = this.game === 'board';
       this.sketch.pointers = [null, null];
       this.fx.scene(this.sketch);
-      if (board) {
-        // the row of pictures at the top, like the garden's: what a pinch puts on
-        this.chooser.build(BOARD_THINGS.map((t) => ({ id: t.id, name: t.name, html: this.gardenPic(t), once: Boolean(t.once), repick: Boolean(t.pen), hold: t.clear ? 1300 : t.once ? 700 : undefined })), this.boardPick);
-        this.chooser.onPick = (player, item) => this.boardPicked(player, item);
-        this.chooser.show(true);
-        this.showBoardPicks();
-      } else this.buildPalette(); // tracing keeps its palette: the pen and its colours
+      this.buildRow(); // the board: what a pinch puts on; tracing: the colours and pen widths
       // No lesson and no ghost hands here: both drawing games begin drawing at
       // once, and the picture to trace is up from the first frame.
       this.fx.hint(null);
@@ -15155,24 +15279,18 @@ const __fun = (() => {
       this.step = 'drawing';
       say(this.title, board ? 'Drawing board: pinch and draw — on the board, or on yourselves!' : 'Trace a picture: pinch, and follow the dashes!');
       this.say();
-      this.showPens();
       this.showCounts();
       this.fx.changed();
     }
 
-    // Is this point (fractions of the picture) on a swatch of a palette?
-    // Gives [the swatch, whose palette] or null.
-    swatchAt(x, y) {
-      const frame = this.palettes.parentElement.getBoundingClientRect();
-      const px = frame.left + x * frame.width;
-      const py = frame.top + y * frame.height;
-      for (const palette of this.palettes.children) {
-        for (const b of palette.children) {
-          const r = b.getBoundingClientRect();
-          if (px >= r.left - 4 && px <= r.right + 4 && py >= r.top - 4 && py <= r.bottom + 4) return [b, Number(palette.dataset.player)];
-        }
-      }
-      return null;
+    // A fingertip rested on a colour, a pen width, ↶ or 🧹 in tracing's row.
+    tracePicked(player, item) {
+      if (item.id === 'undo') return this.undo(this.mine(player));
+      if (item.id === 'erase') return this.erase(this.mine(player));
+      const [group, i] = item.id.split('-');
+      if (group === 'color') this.pens[player].color = Number(i);
+      else this.pens[player].size = Number(i);
+      this.fx.chime(['G5']);
     }
 
     // The pinch is the pen: thumb and first finger together draws, apart lifts.
@@ -15189,28 +15307,8 @@ const __fun = (() => {
         const down = hand.pen ? p.shut >= 0.42 : p.shut >= 0.55;
         const { x, y } = p;
         pointers[hand.player] = { x, y, shut: p.shut, down };
-        const hit = down && this.game === 'draw' ? this.swatchAt(x, y) : null; // tracing's palette; the board chooses from the row
-        if (hit) {
-          // resting on a palette: pick, don't draw
-          const [swatch, player] = hit;
-          if (hand.pen) {
-            hand.pen = false;
-            this.sketch.end(hand.id, aspect);
-          }
-          if (hand.onSwatch !== swatch) {
-            hand.onSwatch = swatch;
-            hand.onSwatchSince = now;
-          } else if (now - hand.onSwatchSince >= TUNING.pickHoldMs && !hand.picked) {
-            hand.picked = true;
-            this.pick(player, swatch);
-            this.fx.chime(['G5']);
-          }
-          continue;
-        }
-        hand.onSwatch = null;
-        hand.picked = false;
         if (p.shut < 0.42) pointing.push({ x: 1 - hand.lm[8].x, y: hand.lm[8].y, player: hand.player });
-        if (down && !hand.pen && this.game === 'board' && this.chooser.at(x, y)) continue; // on the row it is choosing, not drawing
+        if (down && !hand.pen && this.chooser.at(x, y)) continue; // on the row it is choosing, not drawing
         if (down && !hand.pen) {
           hand.pen = true;
           // on the board, a stroke begun on a head belongs to that head
@@ -15233,14 +15331,14 @@ const __fun = (() => {
         if (down) this.sketch.trace(x, y, hand.player, aspect);
       }
       this.sketch.pointers = pointers;
-      if (this.game === 'board') this.chooser.tick(pointing, now);
+      this.chooser.tick(pointing, now);
       this.checkTemplate(now);
     }
 
     // A fingertip rested on a picture in the board's row (or it was clicked).
     boardPicked(player, item) {
-      if (item.id === 'undo') return this.undo();
-      if (item.id === 'erase') return this.erase();
+      if (item.id === 'undo') return this.undo(this.mine(player));
+      if (item.id === 'erase') return this.erase(this.mine(player));
       const t = BOARD_THINGS.find((x) => x.id === item.id);
       if (t.pen && this.boardPick[player] === 'pen') this.boardColor[player] = (this.boardColor[player] + 1) % DRAW_COLORS.length; // the pen again: another colour
       this.boardPick[player] = item.id;
@@ -15253,12 +15351,12 @@ const __fun = (() => {
 
     // The pen's cell shows each player's colour on their badge.
     showBoardPicks() {
-      const cell = this.chooser.cells.get('pen');
-      if (!cell) return;
-      PLAYERS.forEach((_, p) => {
-        const who = cell.querySelector(`.who-${p}`);
-        if (who) who.style.background = DRAW_COLORS[this.boardColor[p]];
-      });
+      for (const { b } of this.chooser.cellsOf('pen')) {
+        PLAYERS.forEach((_, p) => {
+          const who = b.querySelector(`.who-${p}`);
+          if (who) who.style.background = DRAW_COLORS[this.boardColor[p]];
+        });
+      }
     }
 
     // A little note as each stamp lands — up a scale, round and round, so a
@@ -15285,10 +15383,22 @@ const __fun = (() => {
       if (this.game !== 'draw' || this.cheered) return;
       const done = this.sketch.traced;
       const t = TEMPLATES[this.template];
+      const solo = this.solo;
       this.sides.forEach((el, p) => {
         const pct = Math.round(done[p] * 100);
-        say(el, `${PLAYERS[p].icon} ${pct}%${this.first === p ? ' 🏆' : ''}`);
+        say(el, solo === null || solo === p ? `${PLAYERS[p].icon} ${pct}%${this.first === p ? ' 🏆' : ''}` : '');
       });
+      if (solo !== null) {
+        // one person: the whole outline is theirs, and it is theirs to finish
+        if (done[solo] < 0.9) return;
+        this.cheered = true;
+        say(this.body, this.fx.toned(`🎉 ${PLAYERS[solo].icon} traced ${t.name}! ${t.icon}`));
+        this.fx.spray([t.icon, 'star', 'cheer'], 'burst', { x: 0.5, y: 0.5, count: 20 });
+        this.fx.party();
+        this.fx.cheer();
+        this.fx.nextPicture();
+        return;
+      }
       if (!this.together) {
         // A race: the first one over the line wins. The celebration stays on
         // the winner's OWN half — confetti across the whole picture would
@@ -16547,7 +16657,7 @@ const __main = (() => {
   let lastTogether = 0;
 
   let level = LEVELS[0];
-  let soloPlayer = 0;  // who has the screen in a solo level
+  let soloPlayer = 0;  // who has the screen when one person plays: Just me, or 1 person in Art
   let pack = 'notes';  // the instrument picked with 🎹 / 🥁
   let pianoPlayer = 0; // who has the piano in a split level; the other player gets the drums
   let writing = true;  // in the make-your-own level: writing the song (true) or playing it back by hand (false)
@@ -16556,6 +16666,7 @@ const __main = (() => {
   let mode = 'none';   // the tab at the top: music, art or games (none on the front page)
   let drawAsked = false; // the arrow pointing at the Draw modes has been shown
   let aloneAsked = false; // and the one offering one-each or a shared picture
+  const ART_GAMES = ['magic', 'draw', 'board', 'garden']; // the games that can be played by one person or by two
   let signsAsked = false; // and the one saying the hand signs can be changed
   let lastNoteAt = 0;  // own song: when its last note was written, and whether the
   let listenAsked = false; // "want to hear it?" prompt has been shown since then
@@ -16606,10 +16717,16 @@ const __main = (() => {
   }
 
   // The fun games need `toned`, so they are made here, after it.
-  const fun = new Fun($('#fun-bar'), $('#magic-legend'), $('#palettes'), $('#choices'), {
+  const fun = new Fun($('#fun-bar'), $('#magic-legend'), $('#choices'), {
     spray: (glyphs, motion, where) => overlay.spray(glyphs, motion, where, performance.now()),
     snapshot: () => savePicture(video, $('#overlay'), level.fun === 'draw'), // tracing softens the camera; the board keeps it sharp
     aspect: () => (stage.clientHeight ? stage.clientWidth / stage.clientHeight : 16 / 9),
+    // where the box of words at the top ends, as a fraction of the picture's height, with a little gap
+    barBottom: () => {
+      const s = stage.getBoundingClientRect();
+      const b = $('#fun-bar').getBoundingClientRect();
+      return s.height && b.height ? Math.min(0.6, (b.bottom - s.top) / s.height + 0.03) : 0.4;
+    },
     changed: () => showTools(),
     magic: (trick, x, y) => overlay.magic(trick, x, y, performance.now()),
     team: (fx, a, b) => overlay.team(fx, a, b, performance.now()),
@@ -17073,22 +17190,43 @@ const __main = (() => {
         pick: (v) => fun.setScene(v),
       }];
     }
-    if (game === 'draw') {
-      return [{
+    if (!ART_GAMES.includes(game)) return [];
+    // The art games: one person, or two. Two have a row each; tracing then has
+    // a second choice, a race or one picture to share.
+    const strips = [{
+      label: 'Players',
+      aria: 'One person, or two',
+      now: fun.artPlayers,
+      options: [
+        { id: 'players-1', key: 1, text: '🙋 1 person' },
+        { id: 'players-2', key: 2, text: '🙋🙋 2 people' },
+      ],
+      pick: (v) => {
+        aloneAsk.hidden = true;
+        fun.setArtPlayers(v, performance.now());
+        refresh(); // every hand belongs to the one person, and the other side of the picture goes
+      },
+    }];
+    if (game === 'draw' && fun.artPlayers === 2) {
+      strips.push({
         label: 'Mode',
         aria: 'One outline each, or one to share',
         now: fun.together,
         options: [
-          { id: 'alone', key: false, text: '🙋 On my own' },
+          { id: 'alone', key: false, text: '🏁 Race' },
           { id: 'together', key: true, text: '🤝 Together' },
         ],
         pick: (v) => {
           aloneAsk.hidden = true;
           fun.setTogether(v);
         },
-      }];
+      });
     }
-    return [];
+    return strips;
+  }
+  /** Is one person playing — Just me in Music, or 1 person in Art? */
+  function isSolo() {
+    return Boolean(level.solo) || (level.mode === 'art' && fun.artPlayers === 1);
   }
 
   // The buttons the strips are made of, by option id, so an arrow can point at
@@ -17142,7 +17280,7 @@ const __main = (() => {
   function pointAtMode(id, bubble) {
     showTools(); // the strip has to exist, and be where it will be
     const btn = modeButtons.get(id);
-    if (btn) pointUpAt(btn, bubble);
+    if (btn) pointUpAt(btn, bubble, $('#fun-bar')); // under the whole box, clear of the rows of colours
   }
 
   function showTools() {
@@ -17195,10 +17333,10 @@ const __main = (() => {
     // It waits for the other bubble ("draw freely, or trace a picture?") to be
     // gone: the two sit side by side along the bottom and used to overlap, so
     // neither could be read. One thing to look at at a time.
-    if (game === 'draw' && fun.templateName && !aloneAsked && fun.step === 'drawing' && drawAsk.hidden) {
+    if (game === 'draw' && fun.templateName && fun.artPlayers === 2 && !aloneAsked && fun.step === 'drawing' && drawAsk.hidden) {
       aloneAsked = true;
       setTimeout(() => {
-        if (level.fun === 'draw' && fun.templateName && drawAsk.hidden) pointAtMode('together', aloneAsk);
+        if (level.fun === 'draw' && fun.templateName && fun.artPlayers === 2 && drawAsk.hidden) pointAtMode('together', aloneAsk);
         setTimeout(() => (aloneAsk.hidden = true), 8000);
       }, 700);
     }
@@ -17208,6 +17346,7 @@ const __main = (() => {
     $('#skip-btn').textContent =
       game === 'picnic' ? '⏭ Another treat' : game === 'snow' || game === 'balloons' || game === 'flies' ? '↺ Again' : game === 'rhythm' || game === 'dance' ? '⏭ Another song' : game === 'frame' ? '⏭ Another painting' : game === 'masks' ? '⏭ Another mask' : '⏭ Next';
     songTools.hidden = [...songTools.children].every((el) => el.hidden);
+    fun.fitTemplate(); // the box at the top is drawn now: the outline to trace goes under it
     listenBtn.textContent = demo ? '⏹ Stop' : '▶ Listen';
     modeBtn.textContent = writing ? '🎯 Play it' : '✏️ Write more';
 
@@ -17247,10 +17386,11 @@ const __main = (() => {
   }
 
   // The same, for a button ABOVE the picture (the top bar): the bubble hangs
-  // below it, with the arrow pointing up.
-  function pointUpAt(button, bubble) {
+  // below it, with the arrow pointing up — or below `clearOf`, if that reaches lower.
+  function pointUpAt(button, bubble, clearOf = null) {
     showTools();
     const b = button.getBoundingClientRect();
+    const under = Math.max(b.bottom, clearOf?.getBoundingClientRect().bottom ?? 0);
     // measured against the bubble's own parent, which is the stage WRAPPER:
     // #stage clips anything above its top edge, so this bubble cannot live there
     const frame = bubble.offsetParent
@@ -17258,7 +17398,7 @@ const __main = (() => {
       : stage.getBoundingClientRect();
     bubble.style.bottom = 'auto';
     bubble.style.left = '0px';
-    bubble.style.top = `${Math.max(6, b.bottom - frame.top + 6)}px`;
+    bubble.style.top = `${Math.max(6, under - frame.top + 6)}px`;
     bubble.hidden = false;
     // Centred on the button (translateX(-50%)), kept far enough in from both
     // edges to stay inside the frame. The sign button sits at the right-hand
@@ -17303,8 +17443,9 @@ const __main = (() => {
     else delete stage.dataset.blur;
     if (!fun.drawing) drawAsk.hidden = nextAsk.hidden = aloneAsk.hidden = true;
 
-    hands.solo = level.solo ? soloPlayer : null;
-    if (level.solo) stage.dataset.solo = soloPlayer;
+    const solo = isSolo();
+    hands.solo = solo ? soloPlayer : null;
+    if (solo) stage.dataset.solo = soloPlayer;
     else delete stage.dataset.solo;
 
     for (const p of PLAYERS) {
@@ -17312,7 +17453,7 @@ const __main = (() => {
       setPack(p.id, level.split ? splitPack : level.song ? 'notes' : pack);
     }
 
-    whoEl.hidden = !level.solo;
+    whoEl.hidden = !solo; // which of the two it is
     packsEl.hidden = Boolean(level.split || level.song || level.fun);
     legend.hidden = Boolean(level.fun); // the fun games are not about notes
     swapBtn.hidden = !level.split;
@@ -17496,9 +17637,10 @@ const __main = (() => {
 
   // The animals in the corners of the saved video, as on screen.
   function badges() {
-    return PLAYERS.filter((p) => !level.solo || p.id === soloPlayer).map((p) => ({
+    const solo = isSolo();
+    return PLAYERS.filter((p) => !solo || p.id === soloPlayer).map((p) => ({
       icon: p.icon,
-      right: !level.solo && p.id === 1,
+      right: !solo && p.id === 1,
     }));
   }
 
@@ -17960,6 +18102,7 @@ const __main = (() => {
   for (const btn of whoEl.children) {
     btn.addEventListener('click', () => {
       soloPlayer = Number(btn.dataset.who);
+      fun.setSoloPlayer(soloPlayer, performance.now());
       refresh();
     });
   }
